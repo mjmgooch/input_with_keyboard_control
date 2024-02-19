@@ -97,6 +97,20 @@ class InputWithKeyboardControlState extends EditableTextState {
   late Function funcionListener;
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Delaying the focus request to ensure the context is ready
+      Future.delayed(Duration(milliseconds: 100), () {
+        // Ensure the widget is still mounted before attempting to request focus
+        if (mounted && !focusNode.hasFocus) {
+          toggleShowKeyboard(false); 
+        }
+      });
+    }
+  }
+
+  @override
   void initState() {
     funcionListener = () {
       if (focusNode.hasFocus) requestKeyboard();
