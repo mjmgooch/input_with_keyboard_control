@@ -102,9 +102,18 @@ class InputWithKeyboardControlState extends EditableTextState {
     if (state == AppLifecycleState.resumed) {
       // Delaying the focus request to ensure the context is ready
       Future.delayed(Duration(milliseconds: 100), () {
-        // Ensure the widget is still mounted before attempting to request focus
-        if (mounted && !focusNode.hasFocus) {
-          toggleShowKeyboard(false); 
+        // Ensure the widget is still mounted before attempting to manage focus
+        if (mounted) {
+          // Check if the focus node already has focus
+          if (focusNode.hasFocus) {
+            toggleShowKeyboard(
+                true); // This should show the keyboard if it's not already visible
+          } else {
+            SystemChannels.textInput.invokeMethod('TextInput.show');
+            focusNode.requestFocus();
+            SystemChannels.textInput.invokeMethod(
+                'TextInput.hide'); // This prevents the keyboard showing but ensures the input has focus. Hacky i know!
+          }
         }
       });
     }
