@@ -106,8 +106,9 @@ class InputWithKeyboardControlState extends EditableTextState {
         if (mounted) {
           // Check if the focus node already has focus
           if (focusNode.hasFocus) {
-            toggleShowKeyboard(
-                true); // This should show the keyboard if it's not already visible
+            SystemChannels.textInput.invokeMethod('TextInput.show');
+            focusNode.requestFocus();
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
           } else {
             SystemChannels.textInput.invokeMethod('TextInput.show');
             focusNode.requestFocus();
